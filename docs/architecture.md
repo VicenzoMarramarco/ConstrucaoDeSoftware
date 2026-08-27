@@ -160,7 +160,7 @@ classDiagram
 ## **5. Visão de Implementação**
 
 ### **5.1 Diagrama de Entidade-Relacionamento**
-O banco de dados atual do Experienciando é modelado como um sistema relacional orientado a conversas e mensagens. A estrutura principal contempla usuários, conversas e mensagens, além da associação entre usuários e conversas.
+O banco de dados atual do Experienciando é modelado como um sistema relacional orientado a conversas e mensagens. A estrutura principal contempla usuários, conversas, participantes e mensagens, com relacionamento explícito entre todas as entidades.
 
 ```mermaid
 erDiagram
@@ -209,12 +209,27 @@ A estrutura lógica dos dados segue o modelo de persistência relacional, em que
 - a autenticação e autorização são tratadas em camada separada, utilizando token de sessão e validações de acesso.
 
 ### **5.3 Banco de Dados Atual**
-O banco de dados atual do sistema foi definido para atender ao fluxo principal do chat, com foco em:
+Com base no modelo de banco entregue, o sistema foi estruturado para atender ao fluxo principal do chat, com foco em:
 - cadastro e autenticação de usuários;
 - criação de conversas entre usuários;
+- associação de participantes às conversas;
 - envio e recuperação de mensagens;
-- associação de múltiplos participantes por conversa;
 - rastreio temporal das interações.
+
+#### Entidades principais
+| Entidade | Principal finalidade |
+| - | - |
+| Usuario | armazenar dados cadastrais e de autenticação do usuário |
+| Conversa | representar uma conversa ou chat entre participantes |
+| Participante | registrar a associação entre usuário e conversa |
+| Mensagem | registrar o conteúdo enviado em cada conversa |
+
+#### Relacionamentos principais
+- Um usuário pode participar de várias conversas;
+- Uma conversa pode ter vários participantes;
+- Um usuário pode enviar várias mensagens;
+- Cada mensagem pertence a uma conversa e tem um remetente;
+- O histórico de mensagens é persistido para consulta posterior.
 
 A modelagem atual mantém consistência entre dados, simplicidade de consulta e facilidade de evolução para novos recursos, como notificações, grupos e histórico de leitura.
 
