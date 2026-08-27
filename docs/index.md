@@ -9,4 +9,5 @@
 
 | Membro | E-mail | Github | 
 |--------|--------|--------|
-| [Nome do integrante] | [email@pucrs.edu.br] | [usuario-github](https://github.com/usuario-github) |
+| [Vicenzo Marramarco] | [vicenzo.martins@pucrs.edu.br] | [VicenzoMarramarco](https://github.com/VicenzoMarramarco) 
+| [Eduardo Castro] | [oeducastro@gmail.com] | [Eduardo Castro](https://github.com/oEduardoCastro) |
