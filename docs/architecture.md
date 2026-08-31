@@ -4,15 +4,16 @@
 
 |Data|Versão|Descrição|Autor|
 | - | - | - | - |
-|27/08/2026|0.1|Versão inicial da arquitetura do projeto Experienciando|Equipe do projeto|
+|27/08/2026|0.1|Versão inicial da arquitetura do projeto Plataforma de Assinaturas de Experiências|Equipe do projeto|
+|31/08/2026|0.2|Correção: alinhamento com especificação de domínio oficial|Equipe do projeto|
 
 ## **1. Introdução**
 
 ### **1.1 Finalidade**
-Este documento tem como objetivo apresentar a visão geral da arquitetura do sistema Experienciando, descrevendo as principais decisões de projeto, componentes, tecnologias e padrões adotados para o desenvolvimento do backend, do aplicativo móvel e da experiência em navegador. A arquitetura foi definida para garantir escalabilidade, manutenção, segurança e boa experiência para os usuários finais.
+Este documento tem como objetivo apresentar a visão geral da arquitetura da Plataforma de Assinaturas de Experiências, descrevendo as principais decisões de projeto, componentes, tecnologias e padrões adotados para o desenvolvimento do backend, do aplicativo móvel e da experiência em navegador. A arquitetura foi definida para garantir escalabilidade, manutenção, segurança e boa experiência para os usuários finais, permitindo a curadoria, disponibilização e gestão de resgates de experiências presenciais.
 
 ### **1.2 Escopo**
-O escopo do sistema inclui o backend responsável pela gestão de usuários, autenticação, mensagens e regras de negócio do chat; o cliente móvel em React Native para acesso em dispositivos móveis; e a versão web para execução em navegador. Este documento deve orientar a equipe de desenvolvimento, manutenção e evolução da solução, garantindo que a estrutura proposta seja seguida durante o ciclo de vida do projeto.
+O escopo do sistema inclui o backend responsável pela gestão de assinantes, parceiros, catálogo de experiências, emissão de vouchers e regras de negócio; o cliente móvel em React Native para acesso em dispositivos móveis; e a versão web para execução em navegador. Este documento deve orientar a equipe de desenvolvimento, manutenção e evolução da solução, garantindo que a estrutura proposta seja seguida durante o ciclo de vida do projeto.
 
 ### **1.3 Definições, Acrônimos e Abreviações**
 
@@ -25,12 +26,14 @@ O escopo do sistema inclui o backend responsável pela gestão de usuários, aut
 |PWA|Progressive Web App|
 |DB|Banco de Dados|
 |UI|User Interface|
+|MVP|Minimum Viable Product|
+|CRUD|Create, Read, Update, Delete|
 
 ### **1.4 Visão Geral**
-O documento detalha a representação arquitetural do Experienciando, incluindo a escolha por uma arquitetura cliente-servidor com backend centralizado e clientes distribuídos. Também são apresentados os principais requisitos, restrições, visão lógica, organização dos módulos e a visão de implementação de dados e componentes, servindo como base para o desenvolvimento e manutenção do sistema.
+O documento detalha a representação arquitetural da Plataforma de Assinaturas de Experiências, incluindo a escolha por uma arquitetura cliente-servidor com backend centralizado e clientes distribuídos. Também são apresentados os principais requisitos, restrições, visão lógica, organização dos módulos e a visão de implementação de dados e componentes, servindo como base para o desenvolvimento e manutenção do sistema.
 
 ## **2. Representação da Arquitetura**
-A arquitetura adotada é uma solução cliente-servidor em camadas, com um backend em Spring Boot responsável por centralizar as regras de negócio e persistência, e clientes em React Native para mobile e acesso em navegador. Essa abordagem foi escolhida porque permite reutilizar a mesma lógica de negócio em diferentes plataformas, reduz a duplicação de regras e facilita a manutenção do sistema.
+A arquitetura adotada é uma solução cliente-servidor em camadas, com um backend em Spring Boot responsável por centralizar as regras de negócio, gestão de assinantes, catálogo de experiências, emissão e validação de vouchers, e persistência de dados. O backend é complementado por clientes em React Native para mobile e acesso em navegador. Essa abordagem foi escolhida porque permite reutilizar a mesma lógica de negócio em diferentes plataformas, reduz a duplicação de regras e facilita a manutenção do sistema.
 
 A solução também considera a execução em navegador, possibilitando que a experiência do usuário seja acessível em computadores e dispositivos com suporte web, preservando a mesma API e estrutura de autenticação.
 
@@ -38,12 +41,13 @@ A solução também considera a execução em navegador, possibilitando que a ex
 
 ```mermaid
 flowchart LR
-    U1[Usuário no mobile] --> A1[App React Native]
-    U2[Usuário no navegador] --> A2[Web / PWA]
+    U1[Assinante no mobile] --> A1[App React Native]
+    U2[Assinante no navegador] --> A2[Web / PWA]
+    U3[Parceiro no navegador] --> A2
     A1 --> B[API Spring Boot]
     A2 --> B
     B --> D[(Banco de Dados)]
-    B --> S[Serviços de autenticação e chat]
+    B --> S[Serviços de Assinatura e Resgates]
     S --> D
 ```
 
@@ -60,11 +64,11 @@ flowchart LR
 ## **4. Visão Lógica**
 
 ### **4.1 Visão geral: Pacotes e Camadas**
-A arquitetura lógica do Experienciando é organizada em camadas, seguindo um padrão de separação de responsabilidades:
+A arquitetura lógica da Plataforma de Assinaturas de Experiências é organizada em camadas, seguindo um padrão de separação de responsabilidades:
 
 - Camada de apresentação: responsável pela interface do usuário, tanto no aplicativo móvel quanto na versão web/navegador. Essa camada envia requisições para a API e exibe as respostas em tela.
-- Camada de aplicação: concentra os controladores, serviços e fluxos principais da aplicação. É responsável por orquestrar operações, autenticação e processamento das regras do chat.
-- Camada de domínio: define entidades, regras de negócio e comportamentos centrais do sistema, como usuários, mensagens, conversas e permissões.
+- Camada de aplicação: concentra os controladores, serviços e fluxos principais da aplicação. É responsável por orquestrar operações de assinatura, catálogo de experiências, emissão de vouchers e processamento de resgates.
+- Camada de domínio: define entidades, regras de negócio e comportamentos centrais do sistema, como clientes, assinantes, parceiros, experiências e vouchers.
 - Camada de infraestrutura: implementa acesso a banco de dados, autenticação, integrações externas e persistência de dados.
 - Camada transversal: inclui segurança, logs, configuração e gestão de dependências utilizadas por todas as partes do sistema.
 
@@ -72,9 +76,9 @@ A arquitetura lógica do Experienciando é organizada em camadas, seguindo um pa
 A estrutura do projeto pode ser organizada da seguinte forma:
 
 ```text
-experienciando/
+plataforma-assinaturas/
 ├── backend/
-│   ├── src/main/java/com/experienciando/
+│   ├── src/main/java/com/assinaturasexperiencias/
 │   │   ├── controller/
 │   │   ├── service/
 │   │   ├── model/
@@ -115,132 +119,191 @@ Cada diretório tem responsabilidade específica:
 
 ```mermaid
 classDiagram
-    class Usuario {
+    class Customer {
         +id: Long
-        +nome: String
+        +name: String
         +email: String
-        +senha: String
+        +document: String
+        +created_at: Date
+    }
+
+    class Subscription {
+        +id: Long
+        +customer_id: Long
+        +plan_id: Long
         +status: String
+        +started_at: Date
+        +expires_at: Date
     }
 
-    class Conversa {
+    class Partner {
         +id: Long
-        +titulo: String
-        +participantes: List<Usuario>
-        +criadaEm: Date
+        +trade_name: String
+        +category: String
+        +document: String
+        +contact_info: String
+        +address: String
     }
 
-    class Mensagem {
+    class Experience {
         +id: Long
-        +conteudo: String
-        +remetente: Usuario
-        +conversa: Conversa
-        +enviadaEm: Date
+        +partner_id: Long
+        +title: String
+        +description: String
+        +category: String
+        +terms: String
     }
 
-    class AuthService {
-        +login(email, senha): Token
-        +validarToken(token): boolean
+    class Voucher {
+        +id: Long
+        +customer_id: Long
+        +partner_id: Long
+        +experience_id: Long
+        +code: String
+        +status: String
+        +issued_at: Date
+        +redeemed_at: Date
     }
 
-    class ChatService {
-        +criarConversa(usuario, participantes)
-        +enviarMensagem(mensagem)
-        +listarMensagens(conversa)
+    class SubscriptionService {
+        +createSubscription(customer, plan)
+        +cancelSubscription(subscription)
+        +validateActiveSubscription(subscription): boolean
     }
 
-    Usuario "1" --> "*" Conversa
-    Usuario "1" --> "*" Mensagem
-    Conversa "1" --> "*" Mensagem
-    AuthService --> Usuario
-    ChatService --> Conversa
-    ChatService --> Mensagem
+    class VoucherService {
+        +issueVoucher(customer, partner, experience)
+        +redeemVoucher(code): Voucher
+        +validateUniquenessRule(customer, partner): boolean
+    }
+
+    class CatalogService {
+        +listExperiences(): List<Experience>
+        +listPartners(): List<Partner>
+        +getExperiencesByCategory(category): List<Experience>
+    }
+
+    Customer "1" --> "*" Subscription
+    Customer "1" --> "*" Voucher
+    Partner "1" --> "*" Experience
+    Partner "1" --> "*" Voucher
+    Experience "1" --> "*" Voucher
+    SubscriptionService --> Subscription
+    SubscriptionService --> Customer
+    VoucherService --> Voucher
+    VoucherService --> Customer
+    VoucherService --> Partner
+    CatalogService --> Experience
+    CatalogService --> Partner
 ```
 
 ## **5. Visão de Implementação**
 
 ### **5.1 Diagrama de Entidade-Relacionamento**
-O banco de dados atual do Experienciando é modelado como um sistema relacional orientado a conversas e mensagens. A estrutura principal contempla usuários, conversas, participantes e mensagens, com relacionamento explícito entre todas as entidades.
+O banco de dados da Plataforma de Assinaturas de Experiências é modelado como um sistema relacional orientado a assinantes, parceiros, experiências e vouchers. A estrutura principal contempla clientes, assinantes, parceiros, experiências e vouchers, com relacionamentos explícitos e restrições de integridade entre todas as entidades.
 
 ```mermaid
 erDiagram
-    USUARIO ||--o{ PARTICIPANTE : participa
-    CONVERSA ||--o{ PARTICIPANTE : possui
-    USUARIO ||--o{ MENSAGEM : envia
-    CONVERSA ||--o{ MENSAGEM : contem
+    CUSTOMER ||--o{ SUBSCRIPTION : has
+    CUSTOMER ||--o{ VOUCHER : issues
+    PARTNER ||--o{ EXPERIENCE : offers
+    PARTNER ||--o{ VOUCHER : receives
+    EXPERIENCE ||--o{ VOUCHER : references
 
-    USUARIO {
+    CUSTOMER {
         bigint id PK
-        varchar nome
+        varchar name
         varchar email
-        varchar senha
+        varchar document
+        datetime created_at
+    }
+
+    SUBSCRIPTION {
+        bigint id PK
+        bigint customer_id FK
+        bigint plan_id FK
         varchar status
-        datetime criadoEm
+        datetime started_at
+        datetime expires_at
     }
 
-    CONVERSA {
+    PARTNER {
         bigint id PK
-        varchar titulo
-        datetime criadaEm
+        varchar trade_name
+        varchar category
+        varchar document
+        varchar contact_info
+        varchar address
     }
 
-    PARTICIPANTE {
+    EXPERIENCE {
         bigint id PK
-        bigint usuarioId FK
-        bigint conversaId FK
-        datetime adicionadoEm
+        bigint partner_id FK
+        varchar title
+        text description
+        varchar category
+        text terms
     }
 
-    MENSAGEM {
+    VOUCHER {
         bigint id PK
-        bigint conversaId FK
-        bigint remetenteId FK
-        text conteudo
-        datetime enviadaEm
+        bigint customer_id FK
+        bigint partner_id FK
+        bigint experience_id FK
+        varchar code
+        varchar status
+        datetime issued_at
+        datetime redeemed_at
     }
 ```
 
 ### **5.2 Diagrama Lógico de Dados**
 A estrutura lógica dos dados segue o modelo de persistência relacional, em que:
-- usuário é identificado por uma chave primária única e armazena dados de perfil e autenticação;
-- conversa representa uma thread de comunicação entre um ou mais participantes;
-- participante registra a relação entre um usuário e uma conversa;
-- mensagem referencia a conversa e o remetente, armazenando o conteúdo e a data de envio;
-- a autenticação e autorização são tratadas em camada separada, utilizando token de sessão e validações de acesso.
+- customer é identificado por uma chave primária única e armazena dados de perfil e identificação do assinante;
+- subscription representa a vigência e condição de ativação do acesso do cliente ao catálogo;
+- partner registra os estabelecimentos parceiros que oferecem experiências;
+- experience representa a oferta ou serviço específico prestado pelo parceiro;
+- voucher referencia o cliente, parceiro e experiência, armazenando o código identificador, status do cupom e datas de emissão/resgate;
+- a autenticação e autorização são tratadas em camada separada, utilizando token de sessão e validações de acesso;
+- restrição de unicidade: um customer pode ter apenas um voucher por partner (UNIQUE(customer_id, partner_id)).
 
 ### **5.3 Banco de Dados Atual**
-Com base no modelo de banco entregue, o sistema foi estruturado para atender ao fluxo principal do chat, com foco em:
-- cadastro e autenticação de usuários;
-- criação de conversas entre usuários;
-- associação de participantes às conversas;
-- envio e recuperação de mensagens;
-- rastreio temporal das interações.
+Com base no modelo de banco definido para a plataforma, o sistema foi estruturado para atender ao fluxo principal de assinaturas e resgates de experiências, com foco em:
+- cadastro e gestão de clientes/assinantes;
+- gestão de parceiros e suas experiências;
+- criação e gestão de assinativas com ciclo de vida completo;
+- emissão ilimitada de vouchers sob regra de negócio (máximo 1 resgate por estabelecimento);
+- validação e resgate de vouchers com controle de status;
+- rastreio temporal de todas as operações.
 
 #### Entidades principais
 | Entidade | Principal finalidade |
 | - | - |
-| Usuario | armazenar dados cadastrais e de autenticação do usuário |
-| Conversa | representar uma conversa ou chat entre participantes |
-| Participante | registrar a associação entre usuário e conversa |
-| Mensagem | registrar o conteúdo enviado em cada conversa |
+| Customer | armazenar dados cadastrais do assinante |
+| Subscription | gerenciar a vigência e ativação de acesso ao catálogo |
+| Partner | armazenar informações dos estabelecimentos parceiros |
+| Experience | registrar as ofertas/serviços dos parceiros |
+| Voucher | registrar a emissão de cupons e seu ciclo de vida |
 
 #### Relacionamentos principais
-- Um usuário pode participar de várias conversas;
-- Uma conversa pode ter vários participantes;
-- Um usuário pode enviar várias mensagens;
-- Cada mensagem pertence a uma conversa e tem um remetente;
-- O histórico de mensagens é persistido para consulta posterior.
+- Um cliente pode ter múltiplas assinativas ao longo do tempo;
+- Apenas assinativas com status ativo permitem emissão de vouchers;
+- Um parceiro pode oferecer múltiplas experiências;
+- Um cliente pode resgatar múltiplos vouchers em diferentes experiências;
+- Restrição de unicidade: máximo um voucher por cliente-parceiro (UNIQUE(customer_id, partner_id));
+- O histórico de vouchers é persistido para consulta e validação posterior.
 
-A modelagem atual mantém consistência entre dados, simplicidade de consulta e facilidade de evolução para novos recursos, como notificações, grupos e histórico de leitura.
+A modelagem atual mantém consistência entre dados, simplicidade de consulta, controle de regras de negócio e facilidade de evolução para novos recursos, como notificações, avaliações e análises de uso.
 
 ## **6. Tamanho e Desempenho**
-O sistema deve atender a um volume de uso moderado a alto, considerando múltiplos usuários simultâneos em conversas em tempo real. A API deve possuir capacidade suficiente para processar autenticação, envio e leitura de mensagens sem degradação perceptível da experiência. O uso de uma arquitetura centralizada com backend em Spring Boot permite aumentar a capacidade de processamento e escalabilidade horizontal conforme a demanda cresce.
+O sistema deve atender a um volume de uso moderado a alto, considerando múltiplos assinantes simultâneos navegando catálogo, emitindo e resgatando vouchers. A API deve possuir capacidade suficiente para processar autenticação, consultas de catálogo, emissão de vouchers e validação de resgates sem degradação perceptível da experiência. O uso de uma arquitetura centralizada com backend em Spring Boot permite aumentar a capacidade de processamento e escalabilidade horizontal conforme a demanda cresce.
 
 A infraestrutura deve ser dimensionada para suportar:
-- usuários simultâneos em múltiplos dispositivos;
-- filas de mensagens e processamento de eventos de chat;
-- volume crescente de histórico de mensagens;
-- acessos via mobile e navegador sem comprometimento de performance.
+- assinantes simultâneos em múltiplos dispositivos e navegadores;
+- consultas paralelas ao catálogo de experiências e parceiros;
+- volume crescente de histórico de vouchers e resgates;
+- acessos via mobile e navegador sem comprometimento de performance;
+- processamento rápido de validações e regras de negócio (unicidade, status de assinatura, etc).
 
 ## **7. Qualidade**
 A arquitetura escolhida favorece vários atributos de qualidade:
@@ -254,6 +317,8 @@ A arquitetura escolhida favorece vários atributos de qualidade:
 
 ## **8. Referências**
 - Ferramentas e tecnologias do projeto: Spring Boot, React Native, Java, JavaScript/TypeScript, banco relacional e arquitetura cliente-servidor.
-- Documento de requisitos do Experienciando.
+- Especificação de Domínio: Plataforma de Assinaturas de Experiências.
+- Documento de requisitos da Plataforma de Assinaturas de Experiências.
 - Práticas de arquitetura de software para aplicações web e mobile com backend centralizado.
 - Modelos de arquitetura em camadas e autenticação com JWT.
+- Padrões de design para gestão de assinaturas e ciclo de vida de cupons/vouchers.

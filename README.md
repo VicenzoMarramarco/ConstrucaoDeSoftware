@@ -1,16 +1,15 @@
 
-> **Como usar este template:** este repositório é a base para o Trabalho de Especificação (T1) da disciplina de Construção de Software (PUCRS). Preencha as seções abaixo e os documentos em `docs/` com as informações do seu projeto, apague este aviso quando terminar e publique a documentação com o GitHub Pages (workflow já configurado em `.github/workflows/deploy.yml`).
-
-# [Nome do Projeto]
+# Plataforma de Assinaturas de Experiências
 
 ### Entenda nossa proposta
-[Descreva em um ou dois parágrafos o problema que o projeto resolve, para quem é destinado e qual a proposta de valor da solução.]
+Plataforma de assinatura recorrente voltada para a curadoria, disponibilização e gestão de resgates de experiências presenciais nas categorias de turismo regional, gastronomia e eventos culturais. O modelo opera como um clube de benefícios onde o assinante ativo tem acesso a um catálogo de experiências com resgates sob demanda, resolvendo a fadiga de decisão do consumidor, a ociosidade de parceiros e a falta de previsibilidade de receita no setor de lazer.
 
 ### Conheça nossa equipe
 
 | Membro | E-mail | Github | Papel | Matrícula |
 |--------|--------|--------|-------|-----------|
-| [Nome do integrante] | [email@pucrs.br] | [usuario-github](https://github.com/usuario-github) | [papel] | [matrícula] |
+| Vicenzo Marramarco | vicenzo.martins@pucrs.edu.br | [VicenzoMarramarco](https://github.com/VicenzoMarramarco) | Desenvolvedor Backend/Arquiteto | - |
+| Eduardo Castro | oeducastro@gmail.com | [oEduardoCastro](https://github.com/oEduardoCastro) | Desenvolvedor Frontend/Mobile | - |
 
 ### Conheça nossa documentação
 * [Documentação completa](https://profschardosim.github.io/construcao-2026.2-t1/)

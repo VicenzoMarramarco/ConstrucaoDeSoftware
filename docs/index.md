@@ -1,13 +1,13 @@
-<h1 style="text-align: center">Início</h1>
+<h1 style="text-align: center">Plataforma de Assinaturas de Experiências</h1>
 
-**Documentação de especificação de [Nome do Projeto], desenvolvida para a disciplina de Construção de Software.**
+**Documentação de especificação da Plataforma de Assinaturas de Experiências, desenvolvida para a disciplina de Construção de Software.**
 
 ## Sobre a documentação
-[Descreva brevemente o propósito deste site: reunir os artefatos de especificação do projeto — visão, arquitetura, identidade visual e planejamento.]
+Este site reúne os artefatos de especificação do projeto — visão geral, arquitetura técnica, identidade visual e requisitos funcionais. A plataforma é uma solução inovadora que resolve fadiga de decisão do consumidor, ociosidade de parceiros e falta de previsibilidade de receita no setor de lazer, operando como um clube de benefícios com assinatura recorrente.
 
 ## Equipe
 
 | Membro | E-mail | Github | 
 |--------|--------|--------|
-| [Vicenzo Marramarco] | [vicenzo.martins@pucrs.edu.br] | [VicenzoMarramarco](https://github.com/VicenzoMarramarco) 
-| [Eduardo Castro] | [oeducastro@gmail.com] | [Eduardo Castro](https://github.com/oEduardoCastro) |
+| Vicenzo Marramarco | vicenzo.martins@pucrs.edu.br | [VicenzoMarramarco](https://github.com/VicenzoMarramarco) |
+| Eduardo Castro | oeducastro@gmail.com | [oEduardoCastro](https://github.com/oEduardoCastro) |

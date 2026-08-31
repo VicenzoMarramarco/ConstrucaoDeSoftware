@@ -1,4 +1,4 @@
-<h1 style="text-align: center">Identidade Visual</h1>
+<h1 style="text-align: center">Identidade Visual - Plataforma de Assinaturas de Experiências</h1>
 
 **Histórico de Revisão**
 
